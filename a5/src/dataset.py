@@ -173,21 +173,20 @@ class CharCorruptionDataset(Dataset):
     def __getitem__(self, idx):
         # TODO [part e]: see spec above
         document = self.data[idx]
-        len_trunc = random.randrange(4, int(self.block_size*7/8))
-        if len(document) > self.block_size*7/8:
-            document = document[:len_trunc]
+        len_trunc = random.randint(4, int(self.block_size*7/8))
+        len_trunc = min(len(document), len_trunc)
+        document = document[:len_trunc]
 
-        len_masked = random.randrange(
-            int(1/8*len(document)), int(3/8*len(document)))
-        len_prefix = random.randrange(1, len(document) - len_masked)
-        len_suffix = len_trunc - len_masked - len_prefix
+        len_masked = random.randint(
+            int(1/8*len_trunc), int(3/8*len_trunc))
+        len_prefix = random.randint(1, len_trunc - len_masked - 1)
 
         prefix = document[:len_prefix]
         masked = document[len_prefix:len_prefix+len_masked]
         suffix = document[len_prefix+len_masked:]
 
         masked_string = prefix + self.MASK_CHAR + suffix + self.MASK_CHAR + \
-            masked + self.PAD_CHAR * (self.block_size - len(document) - 2)
+            masked + self.PAD_CHAR * (self.block_size - len_trunc - 2)
 
         x = masked_string[:-1]
         y = masked_string[1:]
