@@ -179,7 +179,7 @@ class CharCorruptionDataset(Dataset):
 
         len_masked = random.randrange(
             int(1/8*len(document)), int(3/8*len(document)))
-        len_prefix = random.randrange(1, len_trunc - len_masked)
+        len_prefix = random.randrange(1, len(document) - len_masked)
         len_suffix = len_trunc - len_masked - len_prefix
 
         prefix = document[:len_prefix]
